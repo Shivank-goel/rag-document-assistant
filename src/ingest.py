@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Optional
+from utils import clean_text, chunk_text
 
 def load_raw_document(file_path: str) -> Optional[str]:
     try:
@@ -18,9 +19,23 @@ def load_raw_document(file_path: str) -> Optional[str]:
         print(f"Error loading text file {file_path}: {e}")
         return None
     
+
+    
+
 if __name__ == "__main__":
     text = load_raw_document("data/raw/sample.txt")
-    if text:
-        print(text[:500])
+    
+    if text:  # Check if text loaded successfully before processing
+        cleaned_text = clean_text(text)
+        if cleaned_text:
+            print(f"Text preview: {text[:500]}")
+            chunks = chunk_text(cleaned_text)
+            print(f"Total chunks: {len(chunks)}")
+            if chunks:  # Check if chunks exist before accessing
+                print(f" chunks: {chunks}")
+            else:
+                print("No chunks created.")
+        else:
+            print("Text cleaning failed.")
     else:
-        print("No text found.")
+        print("Failed to load text file.")
