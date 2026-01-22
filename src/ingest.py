@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Optional
 from utils import clean_text, chunk_text
+from embeddings import embed_text
 
 def load_raw_document(file_path: str) -> Optional[str]:
     try:
@@ -30,7 +31,9 @@ if __name__ == "__main__":
         if cleaned_text:
             print(f"Text preview: {text[:500]}")
             chunks = chunk_text(cleaned_text)
+            embeddings = embed_text(chunks)
             print(f"Total chunks: {len(chunks)}")
+            print(f"Embedding shape: {embeddings[0].shape}")
             if chunks:  # Check if chunks exist before accessing
                 print(f" chunks: {chunks}")
             else:
