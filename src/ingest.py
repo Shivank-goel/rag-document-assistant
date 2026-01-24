@@ -3,6 +3,7 @@ from typing import Optional
 from utils import clean_text, chunk_text
 from embeddings import embed_text
 from vector_store import create_faiss_index, search_index
+from retriever import Retriever
 
 def load_raw_document(file_path: str) -> Optional[str]:
     try:
@@ -31,15 +32,20 @@ if __name__ == "__main__":
         cleaned_text = clean_text(text)
         if cleaned_text:
             print(f"Text preview: {text[:500]}")
+            # Chunk and embed the text
             chunks = chunk_text(cleaned_text)
             embeddings = embed_text(chunks)
+            # Create the FAISS index
             index = create_faiss_index(embeddings)
+            # Create the retriever
+            retriever = Retriever(index, chunks)
+            
             query = "How does RAG reduce hallucinations?"
-            query_embedding = embed_text([query])[0]
-            indices, distances = search_index(index, query_embedding)
+            results = retriever.retrieve(query, top_k=3)
             print("Top matches:")
-            for idx in indices:
-                 print(chunks[idx][:200])
+            for result in results:
+                print("-" * 40)
+                print(result[:200])
             print(f"Total chunks: {len(chunks)}")
             print(f"Embedding shape: {embeddings[0].shape}")
             if chunks:  # Check if chunks exist before accessing
