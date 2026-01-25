@@ -4,6 +4,7 @@ from utils import clean_text, chunk_text
 from embeddings import embed_text
 from vector_store import create_faiss_index, search_index
 from retriever import Retriever
+from generator import Generator
 
 def load_raw_document(file_path: str) -> Optional[str]:
     try:
@@ -40,10 +41,15 @@ if __name__ == "__main__":
             # Create the retriever
             retriever = Retriever(index, chunks)
             
+            #Generate answer 
+            generator = Generator()
             query = "How does RAG reduce hallucinations?"
-            results = retriever.retrieve(query, top_k=3)
+            contexts = retriever.retrieve(query, top_k=3)
+            answer = generator.generate(query, contexts)
+            print(f"Question: {query}")
+            print(f"Answer: {answer}")
             print("Top matches:")
-            for result in results:
+            for result in contexts:
                 print("-" * 40)
                 print(result[:200])
             print(f"Total chunks: {len(chunks)}")
