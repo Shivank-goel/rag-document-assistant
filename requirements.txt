@@ -2,3 +2,5 @@ sentence-transformers
 faiss-cpu
 transformers
 torch
+fastapi
+uvicorn
