@@ -6,22 +6,34 @@ class Generator:
         self.llm = pipeline(
             "text2text-generation",
             model=model_name,
-            max_new_tokens=200)
+            max_new_tokens=300,
+            do_sample=False)
 
     def generate(self, query: str, contexts: List[str]) -> str:
-        context_text = "\n\n".join(contexts)
+        formatted_context = "\n\n".join(
+    [f"Context {i+1}: {c}" for i, c in enumerate(contexts)]
+)
+
 
         prompt = f"""
-You are an assistant that answers questions using ONLY the provided context.
-If the answer is not in the context, say "I don't know".
+You are an AI assistant answering questions using ONLY the provided context.
+
+Rules:
+- Use only the information from the context.
+- If the answer is not present, say "I don't know based on the given context".
+- Explain the answer in 2–4 clear sentences.
+- Do not add any external knowledge.
 
 Context:
-{context_text}
+----------------
+{formatted_context}
+----------------
 
 Question:
 {query}
 
-Answer:
+Answer (clear and concise):
 """
+
         result = self.llm(prompt)
         return result[0]["generated_text"]
