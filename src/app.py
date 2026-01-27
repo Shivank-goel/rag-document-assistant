@@ -49,5 +49,5 @@ def query_rag(request: QueryRequest):
 
     return {
         "answer": answer,
-        "contexts": contexts
+        "contexts": [c[:200] + "..." for c in contexts]
     }
